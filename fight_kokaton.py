@@ -24,6 +24,7 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 
+
 class Bird:
     """
     ゲームキャラクター（こうかとん）に関するクラス
@@ -142,6 +143,25 @@ class Bomb:
         self.rct.move_ip(self.vx, self.vy)
         screen.blit(self.img, self.rct)
 
+class Explosion:
+    
+    def __init__(self,obj : Bomb ):
+        img0 = pg.transform.rotozoom(pg.image.load("ex03/fig/explosion.gif"), 0, 2.0)
+        self.imgs = [
+            img0,
+            pg.transform.flip(img0, True, False),
+            pg.transform.flip(img0, False, True),
+            pg.transform.flip(img0, True, True)
+        ]#画像リスト
+        self.img0 = self.imgs[0]
+        self.rct = self.img0.get_rect(center = obj.center) #表示場所を決定
+        self.life = 10
+
+    def update(self ,screen : pg.Surface):
+        self.life -=1
+        screen.blit(self.imgs[self.life %4], self.rct)
+        
+
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
@@ -151,6 +171,8 @@ def main():
     
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]
     beam = None
+
+    exp_lst = list()
 
     clock = pg.time.Clock()
     tmr = 0
@@ -178,6 +200,7 @@ def main():
                     beam = None
                     bombs[i] = None
                     bird.change_img(6,screen)
+                    exp_lst.append(Explosion(bomb.rct))
                     pg.display.update() 
         bombs = [bomb for bomb in bombs if bomb is not None]
 
@@ -187,6 +210,12 @@ def main():
             bomb.update(screen)
         if beam is not None:
             beam.update(screen)
+        if len(exp_lst) != 0:
+            for exp in exp_lst:
+                if exp.life <= 0:
+                    exp_lst.remove(exp)
+                exp.update(screen)
+
         pg.display.update()
         tmr += 1
         clock.tick(50)
