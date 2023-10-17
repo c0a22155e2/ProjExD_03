@@ -155,11 +155,11 @@ class Explosion:
         ]#画像リスト
         self.img0 = self.imgs[0]
         self.rct = self.img0.get_rect(center = obj.center) #表示場所を決定
-        self.life = 10
+        self.life = 10#爆発描画時間の設定
 
     def update(self ,screen : pg.Surface):
         self.life -=1
-        screen.blit(self.imgs[self.life %4], self.rct)
+        screen.blit(self.imgs[self.life %4], self.rct)#爆発の描画
         
 
 
@@ -213,7 +213,7 @@ def main():
         if len(exp_lst) != 0:
             for exp in exp_lst:
                 if exp.life <= 0:
-                    exp_lst.remove(exp)
+                    exp_lst.remove(exp)#ライフがない要素は削除する
                 exp.update(screen)
 
         pg.display.update()
